@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "weather-agent"
+version = "0.0.1"
+description = "Weather query through openai and Serp API"
+authors = []
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+openai = "^0.28.0"
+langchain = "^0.2.4"
+
+[tool.poetry.group.dev.dependencies]
+langchain-cli = ">=0.0.15"
+
+[tool.langserve]
+export_module = "weather-agent"
+export_attr = "agent_executor"
+
+[tool.templates-hub]
+use-case = "question-answering"
+author = "Smartvision"
+integrations = ["OpenAI", "serpapi"]
+tags = ["query", "agents"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
