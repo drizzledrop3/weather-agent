@@ -7,11 +7,12 @@ from langchain.agents import AgentType
 from langchain.agents import tool
 from datetime import date
 
-# 设置 OpenAI API 密钥
-openai.api_key = os.getenv('OPENAI_API_KEY')
-
-# 设置中转 API 的基本 URL
-openai.api_base = os.getenv('OPENAI_BASE_URL')
+# 需要在环境中配置 key 如果是中转key 需要配置中转的url
+# # 设置 OpenAI API 密钥
+# openai.api_key = os.getenv('OPENAI_API_KEY')
+#
+# # 设置中转 API 的基本 URL
+# openai.api_base = os.getenv('OPENAI_BASE_URL')
 
 
 @tool
