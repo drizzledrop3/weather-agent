@@ -1,14 +1,10 @@
-import os
-import openai
+from datetime import date
+
 from langchain.agents import load_tools, OpenAIFunctionsAgent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_models import ChatOpenAI
 from langchain_core.pydantic_v1 import BaseModel
-from langchain.agents import initialize_agent
-from langchain.llms import OpenAI
-from langchain.agents import AgentType
-from langchain_community.utilities import SerpAPIWrapper
 from langchain.agents import tool
-from datetime import date
 
 
 # 需要在环境中配置 key 如果是中转key 需要配置中转的url
@@ -30,12 +26,6 @@ def time(text: str) -> str:
     return str(date.today())
 
 
-# 加载 OpenAI 模型
-llm = OpenAI(temperature=0, max_tokens=2048)
-
-# 加载 serpapi 工具
-tools = load_tools(["serpapi"])
-
 # 定义 agent 的模板
 TEMPLATE = """You are an AI assistant that provides real-time weather information using Google Search via SerpAPI.
 You have a tool called `google_search` that allows you to perform a Google search for the current weather in a specified location.
@@ -52,12 +42,17 @@ For example:
 
 You can use the `time` tool to get the current date if necessary for your query.
 
+Remember, use `google_search` for all weather-related queries to get the most accurate and up-to-date information. You do not need to limit your search to just the examples provided; use the tool as needed to answer the weather-related questions accurately.
+When providing weather information, make sure to:
+1. Convert temperature to Celsius and round to one decimal place.
+2. Provide the Sensory temperature in Celsius, also rounded to one decimal place.
+3. Convert wind speed from miles per hour (mph) to meters per second (m/s) and indicate the wind force level in parentheses using the Beaufort scale.
+4. Provide a concise response including the current weather, temperature, sensory temperature, wind speed, and corresponding wind force level.
+
 For example:
 
 <question>What is the date today?</question>
 <logic>Use the `time` tool to get today's date.</logic>
-
-Remember, use `google_search` for all weather-related queries to get the most accurate and up-to-date information. You do not need to limit your search to just the examples provided; use the tool as needed to answer the weather-related questions accurately.
 """
 
 prompt = ChatPromptTemplate.from_messages(  # 创建prompt
@@ -67,6 +62,12 @@ prompt = ChatPromptTemplate.from_messages(  # 创建prompt
         ("human", "{input}"),  # 输入
     ]
 )
+
+# 加载 OpenAI 模型
+llm = ChatOpenAI(temperature=0, max_tokens=2048, model="gpt-3.5-turbo")
+
+# 加载 serpapi 工具
+tools = load_tools(["serpapi"])
 
 # 创建agent
 agent = OpenAIFunctionsAgent(
@@ -79,18 +80,10 @@ agent_executor = AgentExecutor(  # 创建agent_executor
     # 指定agent、tools、max_iterations、early_stopping_method
 ) | (lambda x: x["output"])
 
-print(f'agent_executor: {agent_executor}')
-
 
 class AgentInputs(BaseModel):
     input: str
 
 
 agent_executor = agent_executor.with_types(input_type=AgentInputs)
-# agent_executor.invoke({"input": "今天武汉的天气怎么样"})
-
-# # 工具加载后都需要初始化，verbose 参数为 True，会打印全部的执行详情
-# agent = initialize_agent(tools + [time], llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=False)
-#
-# # 运行 agent
-# print(agent.run("今天武汉的天气怎么样"))
+# agent_executor.invoke({"input": "武汉的天气怎么样"})
