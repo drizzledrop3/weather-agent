@@ -45,9 +45,8 @@ You can use the `time` tool to get the current date if necessary for your query.
 Remember, use `google_search` for all weather-related queries to get the most accurate and up-to-date information. You do not need to limit your search to just the examples provided; use the tool as needed to answer the weather-related questions accurately.
 When providing weather information, make sure to:
 1. Convert temperature to Celsius and round to one decimal place.
-2. Provide the Sensory temperature in Celsius, also rounded to one decimal place.
-3. Convert wind speed from miles per hour (mph) to meters per second (m/s) and indicate the wind force level in parentheses using the Beaufort scale.
-4. Provide a concise response including the current weather, temperature, sensory temperature, wind speed, and corresponding wind force level.
+2. Convert wind speed from miles per hour (mph) to meters per second (m/s) and indicate the wind force level in parentheses using the Beaufort scale.
+3. Provide a concise response including the current weather, wind speed, and corresponding wind force level.
 
 For example:
 
